@@ -1,0 +1,18 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Use a clean install when a lockfile exists, otherwise fall back to install.
+        - npm ci || npm install
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    # `output: 'export'` writes the fully static site to ./out
+    baseDirectory: out
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
