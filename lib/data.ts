@@ -712,23 +712,23 @@ export const GENERIC_TYPES = [
   "AdditionalParameters": {
     "_parameters": {
       "PhoneNumber": "972549764530",
-      "ConvId": "inTlsWt46LWmbLxE3guH",
+      "ConvId": "d0RlOkl5HqefxUW1NJpI",
       "UserId": "972549764530",
       "Language": "en_US",
       "zoneId": "0",
       "siteId": "0",
-      "StreetAddress": "Earth",
+      "StreetAddress": "רחוב שביל ישראל, נתניה",
       "MsgType": "S.O.S",
       "DetectionType": "sos",
       "DetectionTypeId": "sos"
     }
   },
   "IsFailed": false,
-  "Location": "POINT (0 0)",
+  "Location": "POINT (34.8463903139711 32.3219721201333)",
   "SourceType": 5,
   "DataCenterId": "6baaa0a8-6428-44ea-a4a3-e3c3336a8d68",
-  "Id": "{{guid}}",
-  "Time": "{{timestamp}}"
+  "Id": "3a525afc-d192-4e0a-be15-0b1a6e756008",
+  "Time": "2026-04-23T09:59:01.792085Z"
 }` },
   { id: 10002, name: 'CShare_Location', label: 'CShare Location Detection', family: 'CShare' },
   { id: 10003, name: 'CShare_Report',   label: 'CShare Report Detection',   family: 'CShare' },
@@ -759,8 +759,33 @@ export const GENERIC_TYPES = [
   { id: 10024, name: 'SensorHealthStatus',      label: 'Sensor Health Status',       family: 'Health status' },
   { id: 10025, name: 'DispatchedUnit',  label: 'Dispatched Unit Detection', family: 'CAD' },
   { id: 10026, name: 'CAD',             label: 'CAD Detection',    family: 'CAD',
-    params: ['operationType','latitude','longitude','altitude','agency','externalID','eventType','priority','severity'],
-    note: 'Key set per the integration spec. A CAD event-notification handler in code (CADEventNotificationHandler.cs) uses a different set: incidentId, priority, severity, incidentType, remarks, unitId, fullAddress, locInfo — keys vary by CAD adapter.' },
+    params: ['operationType','externalID','incidentId','latitude','longitude','altitude','description','agency','Vendor','zoneId','siteId'],
+    note: 'Keys verified from a captured payload (Vendor "Promad"). operationType is e.g. "close"; externalID and incidentId carry the CAD event id. Keys can vary slightly by CAD vendor — an alternate code handler also emits eventType / priority / severity / incidentType / remarks / unitId / fullAddress.',
+    example: `{
+  "GenericDetectionTypeId": 10026,
+  "AdditionalParameters": {
+    "_parameters": {
+      "operationType": "close",
+      "externalID": "264",
+      "incidentId": "264",
+      "latitude": "19.685526921195365",
+      "longitude": "-101.20129377783203",
+      "altitude": "0",
+      "description": "YA REPOTADO\\nevent is closed on CAD system",
+      "agency": "12",
+      "Vendor": "Promad",
+      "zoneId": "7304",
+      "siteId": "0"
+    }
+  },
+  "IsFailed": false,
+  "Location": "POINT (-101.201293777832 19.6855269211954 0)",
+  "SensorId": 6728,
+  "SourceType": 102,
+  "DataCenterId": "6baaa0a8-6428-44ea-a4a3-e3c3336a8d68",
+  "Id": "a13ff478-cb30-4bc3-83a3-625fe7fd9acf",
+  "Time": "2026-04-07T23:42:51.3560704Z"
+}` },
   { id: 10027, name: 'BoschFixedHealthStatus', label: 'Bosch Fixed Health Status', family: 'Health status' },
   { id: 10028, name: 'BoschPtzHealthStatus',   label: 'Bosch PTZ Health Status',   family: 'Health status' },
   { id: 10029, name: 'PublicTransportation',   label: 'Public Transportation Detection', family: 'Transport',
@@ -771,7 +796,30 @@ export const GENERIC_TYPES = [
     note: 'DroneTelemetryInfo.ToDictionary() returns an empty dictionary — data relies purely on the base PhysicalId and Location.' },
 
   { id: 100041, name: 'CReact_Report',   label: 'CReact Report Detection', family: 'CReact',
-    params: ['CategoryId','Message','OrganizationId','Severity','Type','UserId','UserName','StreetAddress'] },
+    params: ['CategoryId','Message','OrganizationId','Severity','Type','UserId','UserName','StreetAddress','zoneId','siteId'],
+    example: `{
+  "GenericDetectionTypeId": 100041,
+  "AdditionalParameters": {
+    "_parameters": {
+      "CategoryId": "79",
+      "Message": "DD",
+      "OrganizationId": "1",
+      "Severity": "3",
+      "Type": "report",
+      "UserId": "45",
+      "UserName": "Ron",
+      "StreetAddress": "רחוב המכביה, נתניה",
+      "zoneId": "6093",
+      "siteId": "0"
+    }
+  },
+  "IsFailed": false,
+  "Location": "POINT (34.8650417 32.2932783)",
+  "SourceType": 5,
+  "DataCenterId": "6baaa0a8-6428-44ea-a4a3-e3c3336a8d68",
+  "Id": "cb1461c7-b300-4ad2-a704-aaf4ee7cae32",
+  "Time": "2026-05-14T10:48:45.162535Z"
+}` },
   { id: 100042, name: 'CReact_Location', label: 'CReact active user location', family: 'CReact',
     params: ['UserId','UserStatus','OrganizationId','UserName'],
     example: `{
