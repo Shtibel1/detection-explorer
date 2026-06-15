@@ -795,8 +795,20 @@ export const GENERIC_TYPES = [
     params: ['RequestID','PhoneNumber','Country','State','Name','Surname','Birthday','Gender','Email','StreetAddress'] },
   { id: 100044, name: 'PanicButton', label: 'Oxxo Store Panic Button', family: 'Panic button' },
   { id: 100101, name: 'SapNati', label: 'Sap Nati', family: 'SAP', origin: 'next',
-    params: ['RequestID','Action','NotificationType','NotificationNumber','SourceType','SourceName','SourcePhone','NotificationDescription','Region','Area','RoadNumber','FunctionalLocationDescription','FLNotificationStartKM','FLNotificationEndKM','LocationX','LocationY','Direction','ParentType','SecondaryType','Priority','NotifProcessingStatus','RequiredStartTime','RequiredEndTime','CreatedBy','CreatedDateTime','ChangedBy','ChangedDateTime','Vehicles','SiteType','LifeDangerFlag','SystemStatus','EventId','ReportBackToCaller','… (+ M5* / Fleet* / Yasam* extended fields)'],
-    note: 'One of the largest payloads in the system (~80 keys). The list shows the core fields; SapNatiPlugin.cs also emits Fleet*, M5*, Yasam*, EventBlockage* groups.',
+    params: ['RequestID','Action','NotificationType','NotificationNumber','EventId','EventType','ParentType','SecondaryType','Priority','NotifProcessingStatus','NotifInformationStatus','SystemStatus','NotificationDescription','LongTextEventDescription','SourceType','SourceName','SourcePhone','ReportBackToCaller','CreatedBy','CreatedDateTime','ChangedBy','ChangedDateTime','Region','Area','RoadNumber','FunctionalLocationDescription','FLNotificationStartKM','FLNotificationEndKM','LocationX','LocationEndX','LocationY','LocationEndY','Direction','Equipment','SiteType','LifeDangerFlag','DamageFlag','ImpactOnTraffic','ShualNumber','AttribitionM4','RequiredStartTime','RequiredEndTime','YasamCode','YasamDescription','ServiceCarCode','ServiceCarDescription','YasamServiceCarSLAArrival','YasamServiceCarSLAEnd','FleetVehicleId','FleetVehicleName','FleetVehicleStatus','FleetVehicleType','FleetComment','FleetStatusDateTime','FleetSLAArrival','FleetSLAEnd','FleetOutcome','FleetOutcomeText','FleetSons','M5Dispatch','M5Id','M5OrderId','M5SLAStart','M5SLAEnd','M5Status','M5StatusDateTime','EventBlockage','EventBlockageTaskNumber','ShobParentSourceId','Vehicles','EventLog','Documents'],
+    paramGroups: [
+      { group: 'Notification core', keys: ['RequestID','Action','NotificationType','NotificationNumber','EventId','EventType','ParentType','SecondaryType','Priority','NotifProcessingStatus','NotifInformationStatus','SystemStatus','NotificationDescription','LongTextEventDescription'] },
+      { group: 'Source / reporter', keys: ['SourceType','SourceName','SourcePhone','ReportBackToCaller','CreatedBy','CreatedDateTime','ChangedBy','ChangedDateTime'] },
+      { group: 'Location', keys: ['Region','Area','RoadNumber','FunctionalLocationDescription','FLNotificationStartKM','FLNotificationEndKM','LocationX','LocationEndX','LocationY','LocationEndY','Direction','Equipment','SiteType'] },
+      { group: 'Severity / impact', keys: ['LifeDangerFlag','DamageFlag','ImpactOnTraffic','ShualNumber','AttribitionM4'] },
+      { group: 'SLA / timing', keys: ['RequiredStartTime','RequiredEndTime'] },
+      { group: 'Yasam (service car)', keys: ['YasamCode','YasamDescription','ServiceCarCode','ServiceCarDescription','YasamServiceCarSLAArrival','YasamServiceCarSLAEnd'] },
+      { group: 'Fleet', keys: ['FleetVehicleId','FleetVehicleName','FleetVehicleStatus','FleetVehicleType','FleetComment','FleetStatusDateTime','FleetSLAArrival','FleetSLAEnd','FleetOutcome','FleetOutcomeText','FleetSons'] },
+      { group: 'M5 dispatch', keys: ['M5Dispatch','M5Id','M5OrderId','M5SLAStart','M5SLAEnd','M5Status','M5StatusDateTime'] },
+      { group: 'Linkage / blockage', keys: ['EventBlockage','EventBlockageTaskNumber','ShobParentSourceId'] },
+      { group: 'Attachments / logs', keys: ['Vehicles','EventLog','Documents'] },
+    ],
+    note: 'The full SAP NATI payload — ~72 keys, grouped below. Verified key set from SapNatiPlugin.cs (includes the Fleet*, M5*, Yasam* and EventBlockage* groups).',
     example: `{
   "GenericDetectionTypeId": 100101,
   "AdditionalParameters": {
@@ -921,7 +933,40 @@ export const CODEBASE_DIFF = {
   notRealGaps: 'Agent-flagged "changes" to VIDetectionFull.SegmentID, McpDetection.DetectionSubType and AggregatedSegmentData types were NOT real differences — this catalog already carried the correct types; both branches agree.',
 };
 
+/* ---- Product features ---------------------------------------------------- */
+// The user-facing detection features and the integration each originates from.
+// `link` points at a catalog entry (typed id, or 'g:<GenericName>'); null = not wired yet.
+export const FEATURES = [
+  { id: 'voi', name: 'Vehicle of Interest', abbrev: 'VOI', icon: 'car', accent: 'indigo',
+    origin: 'LPR integration', link: 'lpr', status: 'active',
+    blurb: 'A passing vehicle whose plate matches a hotlist / watch-list. Raised from license-plate reads (C4ILprDetection).' },
+  { id: 'poi', name: 'Person of Interest', abbrev: 'POI', icon: 'scan-face', accent: 'rose',
+    origin: 'Face recognition integration', link: 'face-recognition', status: 'active',
+    blurb: 'A face captured on camera that matches a watch-list case. Raised from face-recognition matches (FaceRecognition / FaceDetection).' },
+  { id: 'sap', name: 'SAP', abbrev: 'SAP', icon: 'briefcase', accent: 'amber',
+    origin: 'SAP NATI specific integration', link: 'g:SapNati', status: 'active',
+    blurb: 'Road / infrastructure notifications from the SAP NATI system — events, dispatch, fleet and service-car SLAs. The largest payload in the platform.' },
+  { id: 'pbx', name: 'PBX', abbrev: 'PBX', icon: 'phone-call', accent: 'amber',
+    origin: 'PBX NATI specific integration', link: 'g:SapPBX', status: 'active',
+    blurb: 'Call-center / PBX events from the SAP NATI PBX integration — caller, queue and wait time.' },
+  { id: 'creact', name: 'First Responders App (C-React)', abbrev: 'C-React', icon: 'shield', accent: 'emerald',
+    origin: 'First-responder mobile app integration', link: 'g:CReact_Report', status: 'active',
+    blurb: 'Reports and live user locations from the C-React first-responder mobile app (CReact_Report / CReact_Location).' },
+  { id: 'cshare', name: 'Citizen App (C-Share)', abbrev: 'C-Share', icon: 'smartphone', accent: 'sky',
+    origin: 'Citizen mobile app integration', link: 'g:CShare_SOS', status: 'active',
+    blurb: 'SOS calls, reports and locations from the C-Share citizen mobile app (CShare_SOS / CShare_Location / CShare_Report).' },
+  { id: 'cad', name: 'CAD', abbrev: 'CAD', icon: 'siren', accent: 'violet',
+    origin: 'CAD integration', link: 'g:CAD', status: 'active',
+    blurb: 'Computer-Aided Dispatch incidents and dispatched units from the CAD integration.' },
+  { id: 'tls', name: 'TLS', abbrev: 'TLS', icon: 'traffic-cone', accent: 'teal',
+    origin: 'DataHub NATI specific integration', link: 'g:TlsFault', status: 'active',
+    blurb: 'Traffic-light system (TLS) faults from the DataHub NATI integration.' },
+  { id: 'cnc', name: 'C&C', abbrev: 'C&C', icon: 'radio', accent: 'slate',
+    origin: 'DataHub NATI specific integration', link: null, status: 'pending',
+    blurb: 'Command & Control feed from the DataHub NATI integration. Implementation pending — no detection type is wired yet.' },
+];
+
 export const D = {
   BASE_FIELDS, FILE_OBJECT_FIELDS, SUPPORTING_TYPES,
-  TYPED_DETECTIONS, GENERIC_BASE, GENERIC_TYPES, CODEBASE_DIFF,
+  TYPED_DETECTIONS, GENERIC_BASE, GENERIC_TYPES, CODEBASE_DIFF, FEATURES,
 };

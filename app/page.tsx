@@ -167,11 +167,21 @@ function renderGenericType(g: any) {
     html += `<p class="text-xs text-amber-200/90 mt-3 px-3 py-2 rounded-lg bg-amber-950/30 border border-amber-700/40"><i data-lucide="alert-triangle" class="inline w-3.5 h-3.5 mr-1 text-amber-400"></i>${esc(g.note)}</p>`;
   }
 
-  if (g.params && g.params.length) {
+  const keyPill = (p: string) => `<span class="pill bg-slate-800 text-teal-300 border border-slate-700 font-mono">${esc(p)}</span>`;
+  if (g.paramGroups && g.paramGroups.length) {
+    const total = g.paramGroups.reduce((n: number, gr: any) => n + gr.keys.length, 0);
+    html += sectionTitle('key-round', 'AdditionalParameters keys', `${total} keys · ${g.paramGroups.length} groups`);
+    html += `<div class="rounded-xl border border-slate-700 bg-slate-800/40 divide-y divide-slate-700/60 overflow-hidden">`;
+    g.paramGroups.forEach((gr: any) => {
+      html += `<div class="px-4 py-3">
+        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">${esc(gr.group)} <span class="text-slate-600 font-normal">· ${gr.keys.length}</span></p>
+        <div class="flex flex-wrap gap-1.5">${gr.keys.map(keyPill).join('')}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  } else if (g.params && g.params.length) {
     html += sectionTitle('key-round', 'AdditionalParameters keys', `${g.params.length} key${g.params.length === 1 ? '' : 's'}`);
-    html += `<div class="flex flex-wrap gap-1.5">` +
-      g.params.map((p: string) => `<span class="pill bg-slate-800 text-teal-300 border border-slate-700 font-mono">${esc(p)}</span>`).join('') +
-      `</div>`;
+    html += `<div class="rounded-xl border border-slate-700 bg-slate-800/40 px-4 py-3 flex flex-wrap gap-1.5">${g.params.map(keyPill).join('')}</div>`;
   } else {
     html += `<p class="text-sm text-slate-500 italic mt-6">Specific parameter keys for this type are not documented here — they are payload-specific. The base structure below applies.</p>`;
   }
@@ -269,18 +279,36 @@ function buildDetail(id: string) {
   return t ? renderTyped(t) : '';
 }
 
+const ACCENT: Record<string, string> = {
+  indigo: 'bg-indigo-900/40 text-indigo-300 border-indigo-700/50',
+  rose: 'bg-rose-900/40 text-rose-300 border-rose-700/50',
+  amber: 'bg-amber-900/40 text-amber-300 border-amber-700/50',
+  emerald: 'bg-emerald-900/40 text-emerald-300 border-emerald-700/50',
+  sky: 'bg-sky-900/40 text-sky-300 border-sky-700/50',
+  violet: 'bg-violet-900/40 text-violet-300 border-violet-700/50',
+  teal: 'bg-teal-900/40 text-teal-300 border-teal-700/50',
+  slate: 'bg-slate-700/50 text-slate-300 border-slate-600',
+};
+
 /* ----------------------------------------------------------------- component */
 export default function Page() {
+  const [view, setView] = useState<'features' | 'catalog'>('features');
   const [selected, setSelected] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [copied, setCopied] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // deep-link on first load (e.g. #diff)
+  // deep-link on first load (e.g. #diff) — jump straight into the catalog
   useEffect(() => {
     const h = decodeURIComponent(window.location.hash.slice(1));
-    if (h) setSelected(h);
+    if (h) { setSelected(h); setView('catalog'); }
   }, []);
+
+  function openFeature(f: any) {
+    if (!f.link) return;
+    setSelected(f.link);
+    setView('catalog');
+  }
 
   // (re)draw lucide icons whenever the rendered markup changes
   useEffect(() => {
@@ -354,12 +382,28 @@ export default function Page() {
             <p className="text-xs text-slate-400 leading-none mt-0.5">System knowledge base — fields &amp; examples per detection type</p>
           </div>
         </div>
+        {/* Tab switcher */}
+        <div className="flex items-center gap-1 bg-slate-700/50 rounded-lg p-1">
+          <button
+            onClick={() => setView('features')}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${view === 'features' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'}`}
+          >
+            <i data-lucide="sparkles" className="w-3.5 h-3.5" /> Product Features
+          </button>
+          <button
+            onClick={() => setView('catalog')}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${view === 'catalog' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'}`}
+          >
+            <i data-lucide="library" className="w-3.5 h-3.5" /> Detection Catalog
+          </button>
+        </div>
+
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-slate-400 hidden md:inline">
             {D.TYPED_DETECTIONS.length} typed · {D.GENERIC_TYPES.length} generic
           </span>
           <button
-            onClick={() => setSelected('base')}
+            onClick={() => { setSelected('base'); setView('catalog'); }}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-indigo-300 hover:text-white hover:bg-indigo-600/40 border border-indigo-500/30 hover:border-indigo-500 transition-colors"
           >
             <i data-lucide="layers" className="w-3.5 h-3.5" />
@@ -368,6 +412,7 @@ export default function Page() {
         </div>
       </header>
 
+      {view === 'catalog' ? (
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside className="w-80 flex-none flex flex-col bg-slate-800/50 border-r border-slate-700 overflow-hidden">
@@ -437,6 +482,63 @@ export default function Page() {
           </div>
         </main>
       </div>
+      ) : (
+        /* ---------------------------------------------- Product Features tab */
+        <div className="flex-1 overflow-y-auto">
+          <div className="px-8 py-7 max-w-6xl mx-auto">
+            <div className="flex items-center gap-2">
+              <i data-lucide="sparkles" className="w-5 h-5 text-indigo-400" />
+              <h2 className="text-xl font-bold text-white">Product Features</h2>
+            </div>
+            <p className="text-sm text-slate-400 mt-1.5 mb-6 max-w-3xl">
+              The user-facing detection features and the integration each originates from. Click a
+              card to open its underlying detection in the catalog.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {D.FEATURES.map((f: any) => (
+                <button
+                  key={f.id}
+                  disabled={f.status === 'pending'}
+                  onClick={() => openFeature(f)}
+                  className={`text-left rounded-2xl border p-5 transition-colors flex flex-col ${
+                    f.status === 'pending'
+                      ? 'border-slate-700/70 bg-slate-800/30 opacity-70 cursor-default'
+                      : 'border-slate-700 bg-slate-800/40 hover:border-indigo-500/60 hover:bg-slate-800/70 cursor-pointer'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-none ${ACCENT[f.accent] || ACCENT.slate}`}>
+                      <i data-lucide={f.icon} className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-white leading-tight truncate">{f.name}</p>
+                      <span className="inline-block mt-1 px-1.5 py-0.5 rounded bg-slate-700/70 text-slate-300 text-[10px] font-mono font-semibold">{f.abbrev}</span>
+                    </div>
+                    {f.status === 'pending' && (
+                      <span className="ml-auto pill bg-amber-900/40 text-amber-300 border border-amber-700/50">Pending</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed mb-4 flex-1">{f.blurb}</p>
+                  <div className="flex items-center justify-between text-[11px] pt-3 border-t border-slate-700/60">
+                    <span className="text-slate-500 flex items-center gap-1 min-w-0">
+                      <i data-lucide="plug" className="w-3 h-3 flex-none" />
+                      <span className="truncate">{f.origin}</span>
+                    </span>
+                    {f.link ? (
+                      <span className="text-indigo-300 font-medium flex items-center gap-1 flex-none">
+                        Open detection <i data-lucide="arrow-right" className="w-3 h-3" />
+                      </span>
+                    ) : (
+                      <span className="text-slate-600 flex-none">Not yet wired</span>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Toast */}
       <div
