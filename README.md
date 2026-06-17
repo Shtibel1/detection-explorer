@@ -2,7 +2,9 @@
 
 Internal, read-only knowledge tool for the product & dev teams. Documents every detection
 type in the system — fields (with real C# types), inheritance, and an example payload per
-type — plus a **Codebase Differences** page comparing `Main-Next` ↔ `Main-Global`.
+type — plus a **Codebase Differences** page comparing three branches: `Main-Next` ↔
+`Main-Global` ↔ `CDMX` (Main-Next-NATI-CDMX, a merge of the two). Each entry shows which
+branches contain it (sidebar dots / badges: no dot = all branches).
 
 This is the **Next.js** build, packaged for **AWS Amplify** static hosting. It supersedes the
 plain static `detection-explorer/` project. It is documentation only — it does **not** send

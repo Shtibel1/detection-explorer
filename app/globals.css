@@ -102,8 +102,9 @@ pre.code {
 
 /* origin dots in the sidebar */
 .odot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
-.odot-g { background: #38bdf8; }   /* Main-Global only */
-.odot-n { background: #fb923c; }   /* Main-Next only   */
+.odot-g { background: #38bdf8; }   /* Main-Global */
+.odot-n { background: #fb923c; }   /* Main-Next   */
+.odot-c { background: #2dd4bf; }   /* CDMX        */
 
 .nav-legend {
   display: flex;

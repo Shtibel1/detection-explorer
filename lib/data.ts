@@ -370,7 +370,7 @@ export const TYPED_DETECTIONS = [
 
   /* ---- Main-Global-only typed detections (not present in Main-Next) ----- */
   {
-    id: 'face-recognition', origin: 'global', illustrative: false,
+    id: 'face-recognition', branches: ['global', 'cdmx'], illustrative: false,
     name: 'Face Recognition (enriched)',
     className: 'FaceRecognition',
     icon: 'scan-face',
@@ -422,7 +422,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'environmental', origin: 'global', illustrative: true,
+    id: 'environmental', branches: ['global', 'cdmx'], illustrative: true,
     name: 'Air Quality (Environmental)',
     className: 'EnvironmentalDetection',
     icon: 'wind',
@@ -451,7 +451,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'weather', origin: 'global', illustrative: true,
+    id: 'weather', branches: ['global', 'cdmx'], illustrative: true,
     name: 'Weather',
     className: 'WeatherDetection',
     icon: 'cloud-sun',
@@ -478,7 +478,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'structural', origin: 'global', illustrative: true,
+    id: 'structural', branches: ['global', 'cdmx'], illustrative: true,
     name: 'Structural Health',
     className: 'StructuralDetection',
     icon: 'building-2',
@@ -503,7 +503,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'traffic-measurement', origin: 'global', illustrative: true,
+    id: 'traffic-measurement', branches: ['global', 'cdmx'], illustrative: true,
     name: 'Traffic Measurement',
     className: 'TrafficMeasurementDetection',
     icon: 'gauge',
@@ -534,7 +534,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'high-occupancy', origin: 'global', illustrative: true,
+    id: 'high-occupancy', branches: ['global', 'cdmx'], illustrative: true,
     name: 'High-Occupancy Traffic',
     className: 'HighOccupancyTrafficDetection',
     icon: 'traffic-cone',
@@ -554,7 +554,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'common-detection', origin: 'global', illustrative: true,
+    id: 'common-detection', branches: ['global', 'cdmx'], illustrative: true,
     name: 'Common Detection',
     className: 'CommonDetection',
     icon: 'circle-dot',
@@ -577,7 +577,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'dynamic-location', origin: 'global', illustrative: true,
+    id: 'dynamic-location', branches: ['global', 'cdmx'], illustrative: true,
     name: 'Dynamic Location',
     className: 'DynamicLocationDetection',
     icon: 'navigation',
@@ -601,7 +601,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'external-detection', origin: 'global', illustrative: true,
+    id: 'external-detection', branches: ['global', 'cdmx'], illustrative: true,
     name: 'External Detection',
     className: 'ExternalDetection',
     icon: 'plug',
@@ -625,7 +625,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'uav-telemetry', origin: 'global', illustrative: true, standalone: true,
+    id: 'uav-telemetry', branches: ['global', 'cdmx'], illustrative: true, standalone: true,
     name: 'UAV Telemetry',
     className: 'TelemetryInfo',
     icon: 'plane',
@@ -663,7 +663,7 @@ export const TYPED_DETECTIONS = [
 }`
   },
   {
-    id: 'ws-health', origin: 'global', illustrative: true, standalone: true,
+    id: 'ws-health', branches: ['global', 'cdmx'], illustrative: true, standalone: true,
     name: 'Workstation Health Notification',
     className: 'WsHealthStatusNotification',
     icon: 'activity',
@@ -842,7 +842,7 @@ export const GENERIC_TYPES = [
   { id: 100043, name: 'MinistryOfTourism', label: 'Ministry of Tourism Panic Button', family: 'Panic button',
     params: ['RequestID','PhoneNumber','Country','State','Name','Surname','Birthday','Gender','Email','StreetAddress'] },
   { id: 100044, name: 'PanicButton', label: 'Oxxo Store Panic Button', family: 'Panic button' },
-  { id: 100101, name: 'SapNati', label: 'Sap Nati', family: 'SAP', origin: 'next',
+  { id: 100101, name: 'SapNati', label: 'Sap Nati', family: 'SAP', branches: ['next', 'cdmx'],
     params: ['RequestID','Action','NotificationType','NotificationNumber','EventId','EventType','ParentType','SecondaryType','Priority','NotifProcessingStatus','NotifInformationStatus','SystemStatus','NotificationDescription','LongTextEventDescription','SourceType','SourceName','SourcePhone','ReportBackToCaller','CreatedBy','CreatedDateTime','ChangedBy','ChangedDateTime','Region','Area','RoadNumber','FunctionalLocationDescription','FLNotificationStartKM','FLNotificationEndKM','LocationX','LocationEndX','LocationY','LocationEndY','Direction','Equipment','SiteType','LifeDangerFlag','DamageFlag','ImpactOnTraffic','ShualNumber','AttribitionM4','RequiredStartTime','RequiredEndTime','YasamCode','YasamDescription','ServiceCarCode','ServiceCarDescription','YasamServiceCarSLAArrival','YasamServiceCarSLAEnd','FleetVehicleId','FleetVehicleName','FleetVehicleStatus','FleetVehicleType','FleetComment','FleetStatusDateTime','FleetSLAArrival','FleetSLAEnd','FleetOutcome','FleetOutcomeText','FleetSons','M5Dispatch','M5Id','M5OrderId','M5SLAStart','M5SLAEnd','M5Status','M5StatusDateTime','EventBlockage','EventBlockageTaskNumber','ShobParentSourceId','Vehicles','EventLog','Documents'],
     paramGroups: [
       { group: 'Notification core', keys: ['RequestID','Action','NotificationType','NotificationNumber','EventId','EventType','ParentType','SecondaryType','Priority','NotifProcessingStatus','NotifInformationStatus','SystemStatus','NotificationDescription','LongTextEventDescription'] },
@@ -889,7 +889,7 @@ export const GENERIC_TYPES = [
   "Id": "{{guid}}",
   "Time": "{{timestamp}}"
 }` },
-  { id: 100102, name: 'SapPBX', label: 'Sap PBX', family: 'SAP', origin: 'next',
+  { id: 100102, name: 'SapPBX', label: 'Sap PBX', family: 'SAP', branches: ['next', 'cdmx'],
     params: ['CallTakername','PhoneNumber','Queuename','CallId','WaitingTime','userId'],
     note: 'Spec lists these six keys. The SapPBXPlugin.cs mapping in code primarily populates PhoneNumber.',
     example: `{
@@ -911,10 +911,10 @@ export const GENERIC_TYPES = [
   "Id": "{{guid}}",
   "Time": "{{timestamp}}"
 }` },
-  { id: 100103, name: 'AlarmPanel', label: 'Alarm Control Panel', family: 'Alarm panel', origin: 'next' },
-  { id: 100104, name: 'AVL',        label: 'AVL',                 family: 'Fleet / AVL', origin: 'next',
+  { id: 100103, name: 'AlarmPanel', label: 'Alarm Control Panel', family: 'Alarm panel', branches: ['next', 'cdmx'] },
+  { id: 100104, name: 'AVL',        label: 'AVL',                 family: 'Fleet / AVL', branches: ['next', 'cdmx'],
     note: 'Present in Main-Next at id 100104. In Main-Global this id is commented out and replaced by AVLLocation (100105).' },
-  { id: 100105, name: 'TlsFault',   label: 'Tls Fault',           family: 'Traffic / DataHub', origin: 'next',
+  { id: 100105, name: 'TlsFault',   label: 'Tls Fault',           family: 'Traffic / DataHub', branches: ['next', 'cdmx'],
     params: ['TechNum','EventTypeId','DerivedStatus','SapId','StartTimeUtc','Phase'],
     note: 'From DataHub TlsMessageProcessor.cs. Phase is "Appeared" or "Cleared". NOTE: id 100105 is reused for AVLLocation in Main-Global — TlsFault is Main-Next only.',
     example: `{
@@ -940,9 +940,9 @@ export const GENERIC_TYPES = [
 }` },
 
   /* ---- Main-Global-only generic types (not present in Main-Next) -------- */
-  { id: 100105, name: 'AVLLocation', label: 'AVL Location', family: 'Fleet / AVL', origin: 'global',
+  { id: 100105, name: 'AVLLocation', label: 'AVL Location', family: 'Fleet / AVL', branches: ['global'],
     note: 'Main-Global only. Reuses id 100105 (which is TlsFault in Main-Next). AVL (100104) is commented out in Main-Global in favour of this.' },
-  { id: 100106, name: 'CameraIO', label: 'Camera IO', family: 'Sensors', origin: 'global',
+  { id: 100106, name: 'CameraIO', label: 'Camera IO', family: 'Sensors', branches: ['global'],
     params: ['TotemID','InputID','ButtonType','CorrelationId'],
     note: 'Found in Main-Global (TermID 65001855) — NOT in Main-Next. This resolves the original spec\'s CameraIO entry: it exists, just in the Global branch. Keys per spec: TotemID (firmware), InputID (I/O port), ButtonType (default "Physical"), CorrelationId (event id).' },
 ];
@@ -952,33 +952,38 @@ export const CODEBASE_DIFF = {
   branches: {
     next:   { label: 'Main-Next',   path: 'C:\\dev\\Main-Next' },
     global: { label: 'Main-Global', path: 'C:\\dev\\Main-Global' },
+    cdmx:   { label: 'CDMX',        path: 'C:\\dev\\Main-Next-NATI-CDMX' },
   },
-  summary: 'Main-Next and Main-Global are divergent branches. The shared base classes (UniqueData / DetectionBase, 15 fields) and every detection type common to both are IDENTICAL in fields and types. The differences are: Main-Global adds a set of newer strongly-typed detections, and the two branches diverge in the high range of the GenericDetectionTypes registry.',
+  summary: 'Three branches. The shared base classes (UniqueData / DetectionBase, 15 fields) and every detection type common to the branches are IDENTICAL in fields and types. Main-Global adds a set of newer strongly-typed detections. CDMX (Main-Next-NATI-CDMX) is a MERGE: it carries Main-Global\'s full strongly-typed detection code, but its GenericDetectionTypes registry follows Main-Next (SapNati / SapPBX / AlarmPanel / AVL / TlsFault) — NOT Main-Global (AVLLocation / CameraIO).',
   baseUnchanged: true,
+  cdmxSummary: 'CDMX = Main-Global detection code + Main-Next NATI/SAP generic registry. Every detection class is byte-identical to Main-Global except an internal helper method (SetAdditionalParameters) on GenericDetection — no field / wire-shape change. "AVLLocation" exists in CDMX only as a UI translation term, not an active detection type (its id 100105 is TlsFault, as in Main-Next).',
   globalOnlyTyped: [
     'FaceRecognition', 'EnvironmentalDetection', 'WeatherDetection', 'StructuralDetection',
     'TrafficMeasurementDetection', 'HighOccupancyTrafficDetection', 'CommonDetection',
     'DynamicLocationDetection', 'ExternalDetection', 'TelemetryInfo (UAV, standalone)',
     'WsHealthStatusNotification (extends HealthStatus, not DetectionBase)',
   ],
+  globalOnlyTypedNote: 'These 11 types were added in Main-Global and are ALSO present in CDMX (identical code). They are not in Main-Next.',
   coexistNotes: [
-    'EnvironmentDetection (18 fields) and EnvironmentalDetection (9 pollutant fields) COEXIST in Main-Global — not a rename.',
+    'EnvironmentDetection (18 fields) and EnvironmentalDetection (9 pollutant fields) COEXIST in Main-Global / CDMX — not a rename.',
     'FaceDetection (lean: DetectionImage/FIRs/TrackingID/BsaScore) and FaceRecognition (rich: demographics + FaceMatches) COEXIST. The captured sample payload on record is a FaceRecognition.',
   ],
+  // 3-way presence matrix for the divergent generic types
   genericDiff: [
-    { id: 100101, name: 'SapNati',     in: 'next',   note: 'Main-Next only — absent from Main-Global registry.' },
-    { id: 100102, name: 'SapPBX',      in: 'next',   note: 'Main-Next only — absent from Main-Global registry.' },
-    { id: 100103, name: 'AlarmPanel',  in: 'next',   note: 'Main-Next only — absent from Main-Global registry.' },
-    { id: 100104, name: 'AVL',         in: 'next',   note: 'Main-Next only — commented out in Main-Global.' },
-    { id: 100105, name: 'TlsFault',    in: 'next',   note: 'Main-Next only — id 100105 is AVLLocation in Main-Global.' },
-    { id: 100105, name: 'AVLLocation', in: 'global', note: 'Main-Global only — reuses id 100105.' },
-    { id: 100106, name: 'CameraIO',    in: 'global', note: 'Main-Global only (TermID 65001855). Not in Main-Next.' },
+    { id: 100101, name: 'SapNati',     branches: ['next', 'cdmx'], note: 'In Main-Next & CDMX; absent from Main-Global.' },
+    { id: 100102, name: 'SapPBX',      branches: ['next', 'cdmx'], note: 'In Main-Next & CDMX; absent from Main-Global.' },
+    { id: 100103, name: 'AlarmPanel',  branches: ['next', 'cdmx'], note: 'In Main-Next & CDMX; absent from Main-Global.' },
+    { id: 100104, name: 'AVL',         branches: ['next', 'cdmx'], note: 'In Main-Next & CDMX; commented out in Main-Global.' },
+    { id: 100105, name: 'TlsFault',    branches: ['next', 'cdmx'], note: 'id 100105 in Main-Next & CDMX. In Main-Global id 100105 is AVLLocation instead.' },
+    { id: 100105, name: 'AVLLocation', branches: ['global'],       note: 'Main-Global only — reuses id 100105. In CDMX this is only a UI term, not a detection type.' },
+    { id: 100106, name: 'CameraIO',    branches: ['global'],       note: 'Main-Global only (TermID 65001855). Not in Main-Next or CDMX.' },
   ],
   registryFiles: [
     'Main-Next:   ...\\Binaries\\Databases\\Vulcan\\...\\Configuration.GenericDetectionTypes.sql',
-    'Main-Global: ...\\City\\Database\\Vulcan\\...\\Configuration.GenericDetectionTypes.sql  (ids 100101–100104 absent; 100105 AVLLocation, 100106 CameraIO)',
+    'Main-Global: ...\\City\\Database\\Vulcan\\...\\Configuration.GenericDetectionTypes.sql  (100105 AVLLocation, 100106 CameraIO)',
+    'CDMX:        ...\\City\\Database\\Vulcan\\...\\SystemData\\01-Common\\Configuration.GenericDetectionTypes.sql  (100101–100105 = SapNati…TlsFault, as Main-Next)',
   ],
-  notRealGaps: 'Agent-flagged "changes" to VIDetectionFull.SegmentID, McpDetection.DetectionSubType and AggregatedSegmentData types were NOT real differences — this catalog already carried the correct types; both branches agree.',
+  notRealGaps: 'Earlier agent-flagged "changes" to VIDetectionFull.SegmentID, McpDetection.DetectionSubType and AggregatedSegmentData types were NOT real differences — this catalog already carried the correct types; all branches agree.',
 };
 
 /* ---- Product features ---------------------------------------------------- */

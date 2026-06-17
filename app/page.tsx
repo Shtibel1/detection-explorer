@@ -79,12 +79,22 @@ function supportingBlock(names: string[]) {
   }).join('');
 }
 
-function originBadge(origin?: string) {
-  if (origin === 'global')
-    return `<span class="pill bg-sky-900/50 text-sky-300 border border-sky-700/50"><i data-lucide="git-branch" class="w-3 h-3"></i> Main-Global only</span>`;
-  if (origin === 'next')
-    return `<span class="pill bg-orange-900/40 text-orange-300 border border-orange-700/50"><i data-lucide="git-branch" class="w-3 h-3"></i> Main-Next only</span>`;
-  return `<span class="pill bg-emerald-900/40 text-emerald-300 border border-emerald-700/50"><i data-lucide="check" class="w-3 h-3"></i> Both branches</span>`;
+// Branch metadata shared by string-builders and JSX. Absent `branches` ⇒ all three.
+const ALL_BRANCHES = ['next', 'global', 'cdmx'];
+const BR: Record<string, { label: string; pill: string; dot: string }> = {
+  next:   { label: 'Main-Next',   pill: 'bg-orange-900/40 text-orange-300 border border-orange-700/50', dot: 'odot-n' },
+  global: { label: 'Main-Global', pill: 'bg-sky-900/50 text-sky-300 border border-sky-700/50',          dot: 'odot-g' },
+  cdmx:   { label: 'CDMX',        pill: 'bg-teal-900/50 text-teal-300 border border-teal-700/50',        dot: 'odot-c' },
+};
+const branchesOf = (x: any): string[] => (x && x.branches && x.branches.length ? x.branches : ALL_BRANCHES);
+
+function branchBadges(branches?: string[]) {
+  const set = branches && branches.length ? branches : ALL_BRANCHES;
+  if (set.length === ALL_BRANCHES.length)
+    return `<span class="pill bg-emerald-900/40 text-emerald-300 border border-emerald-700/50"><i data-lucide="check" class="w-3 h-3"></i> All branches</span>`;
+  return ALL_BRANCHES.filter((b) => set.includes(b))
+    .map((b) => `<span class="pill ${BR[b].pill}"><i data-lucide="git-branch" class="w-3 h-3"></i> ${BR[b].label}</span>`)
+    .join('');
 }
 
 function illustrativeNote() {
@@ -103,7 +113,7 @@ function header(title: string, className: string, badges: string) {
 function renderTyped(t: any) {
   const badges = [
     `<span class="pill bg-indigo-900/50 text-indigo-300 border border-indigo-700/50">Strongly-typed</span>`,
-    originBadge(t.origin),
+    branchBadges(t.branches),
     t.standalone
       ? `<span class="pill bg-amber-900/40 text-amber-300 border border-amber-700/50"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Standalone (no DetectionBase)</span>`
       : `<span class="pill bg-slate-700/60 text-slate-300 border border-slate-600">extends ${esc(t.base)}</span>`,
@@ -153,7 +163,7 @@ function renderTyped(t: any) {
 function renderGenericType(g: any) {
   const badges = [
     `<span class="pill bg-violet-900/50 text-violet-300 border border-violet-700/50">Generic detection</span>`,
-    originBadge(g.origin),
+    branchBadges(g.branches),
     `<span class="pill bg-slate-700/60 text-slate-300 border border-slate-600 font-mono">Id ${g.id}</span>`,
     `<span class="pill bg-slate-700/60 text-slate-400 border border-slate-600">${esc(g.family)}</span>`,
   ].join('');
@@ -227,22 +237,28 @@ function renderBaseOverview() {
 }
 
 function renderDiff() {
-  const c = D.CODEBASE_DIFF;
-  let html = header('Codebase Differences', 'Main-Next  ↔  Main-Global',
-    `<span class="pill bg-orange-900/40 text-orange-300 border border-orange-700/50">Main-Next</span>
-     <span class="pill bg-sky-900/50 text-sky-300 border border-sky-700/50">Main-Global</span>`);
+  const c: any = D.CODEBASE_DIFF;
+  let html = header('Codebase Differences', 'Main-Next  ↔  Main-Global  ↔  CDMX',
+    ALL_BRANCHES.map((b) => `<span class="pill ${BR[b].pill}">${esc(c.branches[b].label)}</span>`).join(' '));
 
   html += `<p class="text-sm text-slate-300 leading-relaxed mt-4">${esc(c.summary)}</p>`;
-  html += `<div class="grid grid-cols-2 gap-3 mt-4">
-    <div class="rounded-lg border border-orange-700/40 bg-orange-950/20 px-3 py-2"><p class="text-xs font-semibold text-orange-300">${esc(c.branches.next.label)}</p><p class="text-xs text-slate-400 font-mono mt-0.5">${esc(c.branches.next.path)}</p></div>
-    <div class="rounded-lg border border-sky-700/40 bg-sky-950/20 px-3 py-2"><p class="text-xs font-semibold text-sky-300">${esc(c.branches.global.label)}</p><p class="text-xs text-slate-400 font-mono mt-0.5">${esc(c.branches.global.path)}</p></div>
-  </div>`;
+  html += `<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">` +
+    ALL_BRANCHES.map((b) => `<div class="rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2">
+      <p class="text-xs font-semibold ${b === 'next' ? 'text-orange-300' : b === 'global' ? 'text-sky-300' : 'text-teal-300'}">${esc(c.branches[b].label)}</p>
+      <p class="text-xs text-slate-400 font-mono mt-0.5 break-all">${esc(c.branches[b].path)}</p>
+    </div>`).join('') + `</div>`;
 
   html += `<div class="mt-4 rounded-lg border border-emerald-700/40 bg-emerald-950/20 px-4 py-3 flex items-start gap-2">
     <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 flex-none mt-0.5"></i>
-    <p class="text-sm text-emerald-200">Base classes (UniqueData → DetectionBase, ${D.BASE_FIELDS.length} fields) and all types common to both branches are <strong>identical</strong> in fields and types.</p></div>`;
+    <p class="text-sm text-emerald-200">Base classes (UniqueData → DetectionBase, ${D.BASE_FIELDS.length} fields) and every type common to the branches are <strong>identical</strong> in fields and types.</p></div>`;
 
-  html += sectionTitle('plus-circle', 'Strongly-typed detections in Main-Global only', `${c.globalOnlyTyped.length} new classes`);
+  // CDMX = merge callout
+  html += `<div class="mt-3 rounded-lg border border-teal-700/40 bg-teal-950/20 px-4 py-3 flex items-start gap-2">
+    <i data-lucide="git-merge" class="w-4 h-4 text-teal-400 flex-none mt-0.5"></i>
+    <p class="text-sm text-teal-100">${esc(c.cdmxSummary)}</p></div>`;
+
+  html += sectionTitle('plus-circle', 'Strongly-typed detections added in Main-Global', `${c.globalOnlyTyped.length} classes · also in CDMX`);
+  html += `<p class="text-xs text-slate-500 mb-2">${esc(c.globalOnlyTypedNote)}</p>`;
   html += `<div class="flex flex-wrap gap-2">` +
     c.globalOnlyTyped.map((n: string) => `<span class="pill bg-sky-950/40 text-sky-300 border border-sky-800/50 font-mono">${esc(n)}</span>`).join('') + `</div>`;
 
@@ -250,19 +266,22 @@ function renderDiff() {
   html += `<ul class="text-sm text-slate-300 space-y-2 list-disc pl-5">` +
     c.coexistNotes.map((n: string) => `<li>${esc(n)}</li>`).join('') + `</ul>`;
 
+  // 3-way generic registry matrix
+  const yes = '<span class="pill bg-emerald-900/40 text-emerald-300 border border-emerald-700/50"><i data-lucide="check" class="w-3 h-3"></i></span>';
+  const no = '<span class="text-slate-600">—</span>';
   html += sectionTitle('database', 'Generic registry divergence', 'high-id range (100101+)');
-  html += `<table class="field-table"><thead><tr><th>Id</th><th>Name</th><th>Where</th><th>Note</th></tr></thead><tbody>` +
+  html += `<table class="field-table"><thead><tr><th>Id</th><th>Name</th><th>Main-Next</th><th>Main-Global</th><th>CDMX</th><th>Note</th></tr></thead><tbody>` +
     c.genericDiff.map((d: any) => `<tr>
       <td class="field-name">${d.id}</td>
       <td class="field-type" style="color:#e2e8f0">${esc(d.name)}</td>
-      <td>${d.in === 'global'
-            ? '<span class="pill bg-sky-900/50 text-sky-300 border border-sky-700/50">Main-Global</span>'
-            : '<span class="pill bg-orange-900/40 text-orange-300 border border-orange-700/50">Main-Next</span>'}</td>
+      <td>${d.branches.includes('next') ? yes : no}</td>
+      <td>${d.branches.includes('global') ? yes : no}</td>
+      <td>${d.branches.includes('cdmx') ? yes : no}</td>
       <td class="field-desc">${esc(d.note)}</td>
     </tr>`).join('') + `</tbody></table>`;
 
   html += `<div class="mt-4 text-xs text-slate-500 space-y-1">` +
-    c.registryFiles.map((f: string) => `<p class="font-mono">${esc(f)}</p>`).join('') + `</div>`;
+    c.registryFiles.map((f: string) => `<p class="font-mono break-all">${esc(f)}</p>`).join('') + `</div>`;
 
   html += `<p class="text-xs text-slate-400 mt-6 px-3 py-2 rounded-lg bg-slate-800/60 border border-slate-700"><i data-lucide="info" class="inline w-3.5 h-3.5 mr-1 text-sky-400"></i>${esc(c.notRealGaps)}</p>`;
   return html;
@@ -349,22 +368,25 @@ export default function Page() {
     [],
   );
 
-  const navBtn = (id: string, label: string, tag?: string, origin?: string) => (
-    <button
-      key={id}
-      className={`nav-item${selected === id ? ' active' : ''}`}
-      onClick={() => setSelected(id)}
-    >
-      {origin === 'global' && <span className="odot odot-g" title="Main-Global only" />}
-      {origin === 'next' && <span className="odot odot-n" title="Main-Next only" />}
-      <span className="truncate">{label}</span>
-      {tag && <span className="nav-id">{tag}</span>}
-    </button>
-  );
+  const navBtn = (id: string, label: string, tag?: string, branches?: string[]) => {
+    const set = branches && branches.length ? branches : ALL_BRANCHES;
+    const dots = set.length === ALL_BRANCHES.length ? [] : ALL_BRANCHES.filter((b) => set.includes(b));
+    return (
+      <button
+        key={id}
+        className={`nav-item${selected === id ? ' active' : ''}`}
+        onClick={() => setSelected(id)}
+      >
+        {dots.map((b) => <span key={b} className={`odot ${BR[b].dot}`} title={`${BR[b].label} only`} />)}
+        <span className="truncate">{label}</span>
+        {tag && <span className="nav-id">{tag}</span>}
+      </button>
+    );
+  };
 
   const refItems = [
     { id: 'base', label: 'Base fields', tag: undefined as string | undefined },
-    { id: 'diff', label: 'Codebase Differences', tag: 'N↔G' },
+    { id: 'diff', label: 'Codebase Differences', tag: '3-way' },
   ].filter((r) => match(r.label, r.tag));
 
   const typedItems = D.TYPED_DETECTIONS.filter((t: any) => match(t.name));
@@ -435,7 +457,7 @@ export default function Page() {
             {refItems.map((r) => navBtn(r.id, r.label, r.tag))}
 
             {typedItems.length > 0 && <div className="nav-group-title">Strongly-typed detections</div>}
-            {typedItems.map((t: any) => navBtn(t.id, t.name, undefined, t.origin))}
+            {typedItems.map((t: any) => navBtn(t.id, t.name, undefined, t.branches))}
 
             {families.some((fam) => D.GENERIC_TYPES.some((g: any) => g.family === fam && match(g.name, String(g.id)))) && (
               <div className="nav-group-title">Generic detections</div>
@@ -446,14 +468,15 @@ export default function Page() {
               return (
                 <div key={fam}>
                   <div className="px-4 pt-2 pb-1 text-[10px] font-semibold text-slate-600">{fam}</div>
-                  {items.map((g: any) => navBtn('g:' + g.name, g.name, String(g.id), g.origin))}
+                  {items.map((g: any) => navBtn('g:' + g.name, g.name, String(g.id), g.branches))}
                 </div>
               );
             })}
 
             <div className="nav-legend">
-              <span><span className="odot odot-g" /> Main-Global only</span>
-              <span><span className="odot odot-n" /> Main-Next only</span>
+              <span><span className="odot odot-n" /> Main-Next</span>
+              <span><span className="odot odot-g" /> Main-Global</span>
+              <span><span className="odot odot-c" /> CDMX</span>
             </div>
           </nav>
         </aside>
